@@ -1,0 +1,217 @@
+/**
+ * React Hooks Demo Section
+ * Detailed showcase of all available hooks
+ */
+
+import { memo, useCallback, useState } from 'react';
+import {
+  useConfetti,
+  useConfettiTrigger,
+  useConfettiSequence,
+  useConfettiCenter,
+} from 'react-confetti-burst';
+import { Section, DemoCard, Button, CodeBlock } from '../ui';
+
+const SEQUENCE_CODE = `import { useConfettiSequence } from 'react-confetti-burst';
+
+function App() {
+  const { start, isActive, cancel } = useConfettiSequence([
+    { origin: { x: 100, y: 400 }, delay: 0 },
+    { origin: { x: 300, y: 400 }, delay: 200 },
+    { origin: { x: 500, y: 400 }, delay: 400 },
+    { origin: { x: 700, y: 400 }, delay: 600 },
+  ]);
+
+  return (
+    <>
+      <button onClick={start}>Start Sequence</button>
+      <button onClick={cancel} disabled={!isActive}>Cancel</button>
+    </>
+  );
+}`;
+
+const CENTER_CODE = `import { useConfettiCenter } from 'react-confetti-burst';
+
+function App() {
+  const { fire, isActive } = useConfettiCenter({
+    particleCount: 100,
+    direction: { direction: 'radial', spread: 360 }
+  });
+
+  return (
+    <button onClick={fire}>
+      Center Burst! 🎇
+    </button>
+  );
+}`;
+
+const CONTROL_CODE = `import { useConfetti } from 'react-confetti-burst';
+
+function App() {
+  const { 
+    fire, 
+    isActive, 
+    stopAll,
+    pauseAll,
+    resumeAll,
+    getActiveHandles 
+  } = useConfetti();
+
+  const handle = fire(origin, options);
+
+  // Single animation control
+  handle.pause();
+  handle.resume();
+  handle.stop();
+  handle.addParticles(50);
+  
+  // Global control
+  pauseAll();
+  resumeAll();
+  stopAll();
+  
+  // Get all handles
+  const handles = getActiveHandles();
+  console.log(\`\${handles.length} animations active\`);
+}`;
+
+export const HooksDemo = memo(function HooksDemo() {
+  const { fire, isActive, stopAll, pauseAll, resumeAll, getActiveHandles } =
+    useConfetti();
+  const [handleCount, setHandleCount] = useState(0);
+
+  const { fire: fireCenter } = useConfettiCenter({
+    particleCount: 100,
+    direction: { direction: 'radial', spread: 360 },
+  });
+
+  const { start: startSequence, cancel: cancelSequence, isActive: sequenceActive } =
+    useConfettiSequence([
+      { origin: { x: window.innerWidth * 0.2, y: window.innerHeight * 0.6 }, delay: 0 },
+      { origin: { x: window.innerWidth * 0.4, y: window.innerHeight * 0.6 }, delay: 150 },
+      { origin: { x: window.innerWidth * 0.6, y: window.innerHeight * 0.6 }, delay: 300 },
+      { origin: { x: window.innerWidth * 0.8, y: window.innerHeight * 0.6 }, delay: 450 },
+    ]);
+
+  const { ref: triggerRef, fire: triggerFire } = useConfettiTrigger<HTMLButtonElement>({
+    particleCount: 30,
+    direction: { direction: 'up', spread: 45 },
+  });
+
+  const handleMultiple = useCallback(() => {
+    // Fire from multiple positions
+    for (let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        fire({
+          x: window.innerWidth * (0.2 + i * 0.15),
+          y: window.innerHeight * 0.7,
+        });
+      }, i * 100);
+    }
+  }, [fire]);
+
+  const updateHandleCount = useCallback(() => {
+    setHandleCount(getActiveHandles().length);
+  }, [getActiveHandles]);
+
+  return (
+    <Section
+      id="hooks"
+      title="React Hooks"
+      description="Complete hook API for programmatic confetti control"
+      icon="🪝"
+    >
+      <DemoCard
+        title="useConfettiSequence"
+        description="Create timed sequences of confetti bursts"
+      >
+        <Button onClick={startSequence} disabled={sequenceActive}>
+          🎬 Start Sequence
+        </Button>
+        <Button onClick={cancelSequence} variant="secondary" disabled={!sequenceActive}>
+          ❌ Cancel
+        </Button>
+      </DemoCard>
+      <CodeBlock code={SEQUENCE_CODE} title="useConfettiSequence" />
+
+      <DemoCard
+        title="useConfettiCenter"
+        description="Viewport-centered radial bursts"
+      >
+        <Button onClick={fireCenter}>
+          🎇 Center Burst
+        </Button>
+      </DemoCard>
+      <CodeBlock code={CENTER_CODE} title="useConfettiCenter" />
+
+      <DemoCard
+        title="useConfettiTrigger"
+        description="Bind confetti to an element with a ref"
+      >
+        <Button ref={triggerRef} onClick={triggerFire} variant="secondary">
+          📍 Fire from This Button
+        </Button>
+      </DemoCard>
+
+      <DemoCard
+        title="Animation Control"
+        description="Pause, resume, and manage active animations"
+      >
+        <Button onClick={handleMultiple}>
+          🎊 Fire Multiple
+        </Button>
+        <Button onClick={pauseAll} variant="secondary" size="sm">
+          ⏸️ Pause All
+        </Button>
+        <Button onClick={resumeAll} variant="secondary" size="sm">
+          ▶️ Resume
+        </Button>
+        <Button onClick={stopAll} variant="ghost" size="sm">
+          ⏹️ Stop
+        </Button>
+        <Button onClick={updateHandleCount} variant="ghost" size="sm">
+          📊 Count: {handleCount}
+        </Button>
+      </DemoCard>
+      <CodeBlock code={CONTROL_CODE} title="Animation Control" />
+
+      <DemoCard
+        title="Hook Status"
+        description="Current animation state"
+      >
+        <div
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            flexWrap: 'wrap',
+          }}
+        >
+          <span
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: '0.5rem',
+              background: isActive ? '#166534' : '#334155',
+              color: isActive ? '#4ade80' : '#94a3b8',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+            }}
+          >
+            useConfetti: {isActive ? 'Active' : 'Idle'}
+          </span>
+          <span
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: '0.5rem',
+              background: sequenceActive ? '#166534' : '#334155',
+              color: sequenceActive ? '#4ade80' : '#94a3b8',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+            }}
+          >
+            Sequence: {sequenceActive ? 'Running' : 'Idle'}
+          </span>
+        </div>
+      </DemoCard>
+    </Section>
+  );
+});

@@ -1,0 +1,254 @@
+/**
+ * Advanced Effects Demo Section
+ * Shows trails, glow, fireworks, and other advanced effects
+ */
+
+import { memo, useCallback, useRef } from 'react';
+import { useConfetti, type ExplosionHandle } from 'react-confetti-burst';
+import { Section, DemoCard, Button, CodeBlock } from '../ui';
+
+const TRAIL_CODE = `import { useConfetti } from 'react-confetti-burst';
+
+const { fire } = useConfetti();
+
+fire(origin, {
+  particle: {
+    trail: { 
+      enabled: true, 
+      length: 10, 
+      fade: 0.5 
+    }
+  }
+});`;
+
+const GLOW_CODE = `fire(origin, {
+  particle: {
+    glow: { 
+      enabled: true, 
+      blur: 15, 
+      intensity: 0.8 
+    }
+  }
+});`;
+
+const FIREWORK_CODE = `fire(origin, {
+  mode: 'firework',
+  firework: {
+    secondaryExplosions: true,
+    burstCount: 80,
+    launchHeight: 0.6,
+  }
+});`;
+
+const CONTROL_CODE = `const handleRef = useRef<ExplosionHandle>();
+
+// Start animation
+handleRef.current = fire(origin, {
+  particle: { lifespan: 10000 }
+});
+
+// Control
+handleRef.current.pause();
+handleRef.current.resume();
+handleRef.current.stop();
+
+// Global control
+pauseAll();
+resumeAll();
+stopAll();`;
+
+export const EffectsDemo = memo(function EffectsDemo() {
+  const { fire, pauseAll, resumeAll, stopAll } = useConfetti();
+  const handleRef = useRef<ExplosionHandle | null>(null);
+
+  const handleTrail = useCallback(
+    (e: React.MouseEvent) => {
+      fire(
+        { x: e.clientX, y: e.clientY },
+        {
+          particleCount: 30,
+          particle: {
+            trail: { enabled: true, length: 12, fade: 0.6, width: 0.5 },
+            lifespan: 2500,
+          },
+        }
+      );
+    },
+    [fire]
+  );
+
+  const handleGlow = useCallback(
+    (e: React.MouseEvent) => {
+      fire(
+        { x: e.clientX, y: e.clientY },
+        {
+          particleCount: 40,
+          particle: {
+            glow: { enabled: true, blur: 15, intensity: 0.8, color: null },
+            colors: ['#ff6b6b', '#4ecdc4', '#ffe66d', '#95e1d3'],
+          },
+        }
+      );
+    },
+    [fire]
+  );
+
+  const handleTrailAndGlow = useCallback(
+    (e: React.MouseEvent) => {
+      fire(
+        { x: e.clientX, y: e.clientY },
+        {
+          particleCount: 25,
+          particle: {
+            trail: { enabled: true, length: 10, fade: 0.5, width: 0.5 },
+            glow: { enabled: true, blur: 12, intensity: 0.7, color: null },
+            colors: ['#6366f1', '#8b5cf6', '#ec4899'],
+            lifespan: 3000,
+          },
+        }
+      );
+    },
+    [fire]
+  );
+
+  const handleFirework = useCallback(() => {
+    fire(
+      { x: window.innerWidth / 2, y: window.innerHeight * 0.8 },
+      {
+        mode: 'firework',
+        firework: {
+          secondaryExplosions: true,
+          burstCount: 80,
+          launchHeight: 0.6,
+          riseDuration: 1000,
+          showRocket: true,
+          rocketColors: ['#ffd700', '#ff6b35'],
+          burstColors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'],
+          spread: 360,
+          burstDelay: 500,
+          trailLength: 10,
+        },
+      }
+    );
+  }, [fire]);
+
+  const handleContinuous = useCallback(() => {
+    handleRef.current = fire(
+      { x: window.innerWidth / 2, y: 0 },
+      {
+        mode: 'continuous',
+        continuous: {
+          recycle: true,
+          numberOfPieces: 100,
+          spawnRate: 20,
+          run: true,
+          tweenDuration: 5000,
+        },
+        particle: { lifespan: 8000 },
+        spawnArea: {
+          type: 'rect',
+          x: 0,
+          y: 0,
+          width: window.innerWidth,
+          height: 10,
+        },
+      }
+    );
+  }, [fire]);
+
+  const handleSnow = useCallback(() => {
+    handleRef.current = fire(
+      { x: window.innerWidth / 2, y: 0 },
+      {
+        mode: 'snow',
+        particle: {
+          colors: ['#ffffff', '#f0f8ff', '#e6f3ff'],
+          shapes: ['circle'],
+          size: [4, 8],
+          lifespan: 10000,
+        },
+        physics: { gravity: 0.1, wind: 0.3 },
+        spawnArea: {
+          type: 'rect',
+          x: 0,
+          y: 0,
+          width: window.innerWidth,
+          height: 10,
+        },
+      }
+    );
+  }, [fire]);
+
+  return (
+    <Section
+      id="effects"
+      title="Advanced Effects"
+      description="Trails, glow, fireworks, continuous modes, and animation control"
+      icon="✨"
+    >
+      <DemoCard
+        title="Trail Effect"
+        description="Particles leave a fading trail as they move"
+      >
+        <Button onClick={handleTrail}>
+          ✨ With Trail
+        </Button>
+      </DemoCard>
+      <CodeBlock code={TRAIL_CODE} title="Trail Effect" />
+
+      <DemoCard
+        title="Glow Effect"
+        description="Add a soft glow around particles"
+      >
+        <Button onClick={handleGlow} variant="secondary">
+          💫 With Glow
+        </Button>
+        <Button onClick={handleTrailAndGlow} variant="secondary">
+          🌟 Trail + Glow
+        </Button>
+      </DemoCard>
+      <CodeBlock code={GLOW_CODE} title="Glow Effect" />
+
+      <DemoCard
+        title="Firework Mode"
+        description="Realistic firework bursts with secondary explosions"
+      >
+        <Button onClick={handleFirework}>
+          🎆 Launch Firework
+        </Button>
+      </DemoCard>
+      <CodeBlock code={FIREWORK_CODE} title="Firework Mode" />
+
+      <DemoCard
+        title="Continuous Modes"
+        description="Continuous falling particles (like react-confetti)"
+      >
+        <Button onClick={handleContinuous} variant="secondary">
+          🎉 Continuous
+        </Button>
+        <Button onClick={handleSnow} variant="secondary">
+          ❄️ Snow Mode
+        </Button>
+        <Button onClick={stopAll} variant="ghost">
+          ⏹️ Stop All
+        </Button>
+      </DemoCard>
+
+      <DemoCard
+        title="Animation Control"
+        description="Pause, resume, and control active animations"
+      >
+        <Button onClick={pauseAll} variant="secondary" size="sm">
+          ⏸️ Pause All
+        </Button>
+        <Button onClick={resumeAll} variant="secondary" size="sm">
+          ▶️ Resume All
+        </Button>
+        <Button onClick={stopAll} variant="secondary" size="sm">
+          ⏹️ Stop All
+        </Button>
+      </DemoCard>
+      <CodeBlock code={CONTROL_CODE} title="Animation Control" />
+    </Section>
+  );
+});

@@ -1,0 +1,97 @@
+/**
+ * Presets Demo Section
+ * Showcases all 16 built-in presets
+ */
+
+import { memo, useCallback } from 'react';
+import { useConfetti, getPreset, type PresetName } from 'react-confetti-burst';
+import { Section, DemoCard, Button, CodeBlock } from '../ui';
+import { PRESET_NAMES } from '../../constants';
+
+const PRESET_CODE = `import { useConfetti, getPreset } from 'react-confetti-burst';
+
+function App() {
+  const { fire } = useConfetti();
+
+  const handlePreset = (preset: PresetName) => {
+    fire(
+      { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+      getPreset(preset)
+    );
+  };
+
+  return (
+    <button onClick={() => handlePreset('celebration')}>
+      Celebrate! 🎊
+    </button>
+  );
+}`;
+
+const PRESET_ICONS: Record<string, string> = {
+  default: '🎉',
+  celebration: '🎊',
+  firework: '🎆',
+  snow: '❄️',
+  rain: '🌧️',
+  sparkle: '✨',
+  confetti: '🎀',
+  emoji: '😄',
+  hearts: '❤️',
+  stars: '⭐',
+  money: '💰',
+  pride: '🏳️‍🌈',
+  christmas: '🎄',
+  halloween: '🎃',
+  newYear: '🥂',
+  birthday: '🎂',
+};
+
+export const PresetsDemo = memo(function PresetsDemo() {
+  const { fire } = useConfetti();
+
+  const handlePreset = useCallback(
+    (preset: PresetName, event: React.MouseEvent) => {
+      fire({ x: event.clientX, y: event.clientY }, getPreset(preset));
+    },
+    [fire]
+  );
+
+  return (
+    <Section
+      id="presets"
+      title="Built-in Presets"
+      description="16 ready-to-use confetti presets for any occasion"
+      icon="🎨"
+    >
+      <DemoCard
+        title="All Presets"
+        description="Click any button to see the preset in action"
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+            gap: '0.75rem',
+            width: '100%',
+          }}
+        >
+          {PRESET_NAMES.map((preset) => (
+            <Button
+              key={preset}
+              variant="secondary"
+              size="sm"
+              onClick={(e) => handlePreset(preset as PresetName, e)}
+              style={{ justifyContent: 'flex-start' }}
+            >
+              <span role="img" aria-hidden="true">
+                {PRESET_ICONS[preset]}
+              </span>
+              {preset}
+            </Button>
+          ))}
+        </div>
+      </DemoCard>
+      <CodeBlock code={PRESET_CODE} title="Using Presets" />
+    </Section>
+  );
+});

@@ -1,0 +1,203 @@
+/**
+ * Custom Shapes Demo Section
+ * Shows SVG paths, emoji, and text shapes
+ */
+
+import { memo, useCallback } from 'react';
+import {
+  useConfetti,
+  shapeFromText,
+  shapesFromEmoji,
+  pathShapes,
+  emojiShapes,
+} from 'react-confetti-burst';
+import { Section, DemoCard, Button, CodeBlock } from '../ui';
+
+const PATH_SHAPES_CODE = `import { 
+  shapeFromPath, 
+  pathShapes 
+} from 'react-confetti-burst';
+
+// Create custom SVG path shape
+const star = shapeFromPath({
+  path: 'M0,-1 L0.588,0.809 L-0.951,-0.309 L0.951,-0.309 L-0.588,0.809 Z'
+});
+
+// Use pre-built path shapes
+const { heart, diamond, hexagon } = pathShapes;
+
+fire(origin, {
+  particle: { 
+    shapes: [star, heart, diamond, 'circle'] 
+  }
+});`;
+
+const EMOJI_SHAPES_CODE = `import { 
+  shapeFromText, 
+  shapesFromEmoji,
+  emojiShapes 
+} from 'react-confetti-burst';
+
+// Single emoji shape
+const heart = shapeFromText({ text: '❤️', scalar: 2 });
+
+// Batch emoji shapes
+const party = shapesFromEmoji(['🎉', '🎊', '✨', '🥳']);
+
+// Pre-built emoji sets
+const { hearts, stars, party: partySet } = emojiShapes;
+
+fire(origin, {
+  particle: { shapes: party }
+});`;
+
+const TEXT_SHAPES_CODE = `import { shapeFromText } from 'react-confetti-burst';
+
+// Custom text shape with styling
+const yay = shapeFromText({
+  text: 'YAY',
+  fontFamily: 'Impact',
+  color: '#ff0000',
+  scalar: 1.5
+});
+
+fire(origin, {
+  particle: { shapes: [yay] }
+});`;
+
+export const ShapesDemo = memo(function ShapesDemo() {
+  const { fire } = useConfetti();
+
+  const handlePathShapes = useCallback(
+    (e: React.MouseEvent) => {
+      fire(
+        { x: e.clientX, y: e.clientY },
+        {
+          particleCount: 50,
+          particle: {
+            shapes: [
+              pathShapes.star,
+              pathShapes.heart,
+              pathShapes.diamond,
+              'circle',
+            ] as any,
+          },
+        }
+      );
+    },
+    [fire]
+  );
+
+  const handleEmojiShapes = useCallback(
+    (e: React.MouseEvent) => {
+      fire(
+        { x: e.clientX, y: e.clientY },
+        {
+          particleCount: 40,
+          particle: {
+            shapes: shapesFromEmoji(['🎉', '🎊', '✨', '🥳', '🎈']) as any,
+          },
+        }
+      );
+    },
+    [fire]
+  );
+
+  const handleHearts = useCallback(
+    (e: React.MouseEvent) => {
+      fire(
+        { x: e.clientX, y: e.clientY },
+        {
+          particleCount: 40,
+          particle: {
+            shapes: emojiShapes.hearts as any,
+            colors: ['#ff6b6b', '#ff8787', '#ffa8a8'],
+          },
+        }
+      );
+    },
+    [fire]
+  );
+
+  const handleStars = useCallback(
+    (e: React.MouseEvent) => {
+      fire(
+        { x: e.clientX, y: e.clientY },
+        {
+          particleCount: 50,
+          particle: {
+            shapes: emojiShapes.stars as any,
+            colors: ['#ffd700', '#ffed4a', '#fff9c4'],
+          },
+        }
+      );
+    },
+    [fire]
+  );
+
+  const handleTextShape = useCallback(
+    (e: React.MouseEvent) => {
+      const yay = shapeFromText({
+        text: 'YAY!',
+        fontFamily: 'Arial Black',
+        scalar: 1.5,
+      });
+      fire(
+        { x: e.clientX, y: e.clientY },
+        {
+          particleCount: 20,
+          particle: {
+            shapes: [yay] as any,
+            colors: ['#ff6b6b', '#4ecdc4', '#ffe66d'],
+          },
+        }
+      );
+    },
+    [fire]
+  );
+
+  return (
+    <Section
+      id="shapes"
+      title="Custom Shapes"
+      description="Create confetti from SVG paths, emoji, and text"
+      icon="⭐"
+    >
+      <DemoCard
+        title="SVG Path Shapes"
+        description="Use custom SVG paths or pre-built shapes"
+      >
+        <Button onClick={handlePathShapes}>
+          ⭐ Path Shapes
+        </Button>
+      </DemoCard>
+      <CodeBlock code={PATH_SHAPES_CODE} title="SVG Path Shapes" />
+
+      <DemoCard
+        title="Emoji Shapes"
+        description="Turn any emoji into confetti particles"
+      >
+        <Button onClick={handleEmojiShapes} variant="secondary">
+          🎉 Party Emoji
+        </Button>
+        <Button onClick={handleHearts} variant="secondary">
+          ❤️ Hearts
+        </Button>
+        <Button onClick={handleStars} variant="secondary">
+          ⭐ Stars
+        </Button>
+      </DemoCard>
+      <CodeBlock code={EMOJI_SHAPES_CODE} title="Emoji Shapes" />
+
+      <DemoCard
+        title="Text Shapes"
+        description="Create confetti from custom text"
+      >
+        <Button onClick={handleTextShape}>
+          📝 Text: "YAY!"
+        </Button>
+      </DemoCard>
+      <CodeBlock code={TEXT_SHAPES_CODE} title="Text Shapes" />
+    </Section>
+  );
+});
