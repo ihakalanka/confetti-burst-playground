@@ -87,9 +87,9 @@ function App() {
             </h1>
             <p className="hero-description">
               A high-performance, zero-dependency React confetti component.
-              <br />
+              {/* <br />
               More features than both <code>react-confetti</code> AND{' '}
-              <code>canvas-confetti</code> combined!
+              <code>canvas-confetti</code> combined! */}
             </p>
             <div className="hero-stats">
               <div className="stat">

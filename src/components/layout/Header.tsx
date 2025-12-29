@@ -40,6 +40,14 @@ export const Header = memo(function Header() {
           >
             npm
           </a>
+          <a
+            href="https://buymeacoffee.com/akalankaih4"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.supportLink}
+          >
+            ☕ Support
+          </a>
         </nav>
       </div>
     </header>
