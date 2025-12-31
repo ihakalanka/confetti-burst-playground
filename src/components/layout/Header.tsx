@@ -25,7 +25,7 @@ export const Header = memo(function Header() {
 
         <nav className={styles.nav}>
           <a
-            href="https://github.com/your-username/react-confetti-burst"
+            href="https://github.com/ihakalanka/react-confetti-burst"
             target="_blank"
             rel="noopener noreferrer"
             className={styles.navLink}

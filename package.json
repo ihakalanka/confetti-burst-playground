@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "react": "^19.2.0",
-    "react-confetti-burst": "^1.0.2",
+    "react-confetti-burst": "^1.0.5",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
