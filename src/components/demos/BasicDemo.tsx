@@ -11,7 +11,7 @@ import {
   useConfetti,
   confetti,
 } from 'react-confetti-burst';
-import { Section, DemoCard, Button, CodeBlock } from '../ui';
+import { Section, DemoCard, Button, CodeBlock, ControlPanel } from '../ui';
 
 const BASIC_BUTTON_CODE = `import { ConfettiButton } from 'react-confetti-burst';
 
@@ -105,6 +105,7 @@ export const BasicDemo = memo(function BasicDemo() {
       description="Simple confetti bursts with components and hooks"
       icon="🎉"
     >
+      <ControlPanel />
       <DemoCard
         title="ConfettiButton Component"
         description="The simplest way to add confetti - just wrap your button!"
