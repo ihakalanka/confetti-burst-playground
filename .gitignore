@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+AGENTS.md
+copilot-instructions.md
+PLAN.md
+
+.env
+.env.local

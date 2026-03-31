@@ -2,6 +2,8 @@
  * Type definitions for the demo playground
  */
 
+import type { ReactNode } from 'react';
+
 export type DemoSection = 
   | 'basic'
   | 'hooks'
@@ -9,13 +11,14 @@ export type DemoSection =
   | 'canvas-api'
   | 'shapes'
   | 'effects'
-  | 'accessibility';
+  | 'accessibility'
+  | 'feedback';
 
 export interface DemoConfig {
   readonly id: DemoSection;
   readonly title: string;
   readonly description: string;
-  readonly icon: string;
+  readonly icon: ReactNode;
 }
 
 export interface CodeExample {

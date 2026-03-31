@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# react-confetti-burst Playground
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interactive playground for the [react-confetti-burst](https://github.com/ihakalanka/react-confetti-burst) library — a high-performance, zero-dependency React confetti animation component.
 
-Currently, two official plugins are available:
+## Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Visit the playground: [https://ihakalanka.github.io/confetti-burst-playground/](https://ihakalanka.github.io/confetti-burst-playground/)
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Interactive Control Panel** — Customize particle count, spread, velocity, gravity, colors, and 10+ other parameters with real-time sliders and toggles
+- **Live Code Generation** — See the exact code for your configuration, copy with one click
+- **Built-in Presets** — Quick-start with Default, Party, Snow, Fireworks, and Gentle presets
+- **Multiple API Demos** — Examples for ConfettiButton component, useConfetti hook, and confetti() function
+- **Responsive Design** — Works on desktop and mobile with dark theme
 
-## Expanding the ESLint configuration
+## Demo Sections
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| Section | Status | Description |
+|---------|--------|-------------|
+| Basic Usage | Active | ConfettiButton, useConfetti, confetti() |
+| React Hooks | Planned | All hook variants |
+| Built-in Presets | Planned | 16 preset configurations |
+| canvas-confetti API | Planned | Drop-in replacement demos |
+| Custom Shapes | Planned | SVG, emoji, text, image shapes |
+| Advanced Effects | Planned | Trails, glow, fireworks |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Local Development
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Prerequisites
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js >= 18.0.0
+- npm
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/ihakalanka/confetti-burst-playground.git
+cd confetti-burst-playground
+
+# Install dependencies
+npm install
+
+# Start dev server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open [http://localhost:5173/confetti-burst-playground/](http://localhost:5173/confetti-burst-playground/) in your browser.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start Vite dev server with HMR |
+| `npm run build` | TypeScript check + production build |
+| `npm run lint` | Run ESLint |
+| `npm run preview` | Preview production build |
+| `npm run deploy` | Build and deploy to GitHub Pages |
+
+## Tech Stack
+
+- **React 19** with TypeScript (strict mode)
+- **Vite 5** for fast dev/build
+- **CSS Modules** + CSS custom properties (dark theme)
+- **GitHub Pages** deployment via gh-pages
+
+## Related
+
+- [react-confetti-burst](https://github.com/ihakalanka/react-confetti-burst) — The main library
+- [npm package](https://www.npmjs.com/package/react-confetti-burst)
+
+## License
+
+MIT

@@ -3,8 +3,23 @@
  * Modern, polished UI with inline styles for reliability
  */
 
-import { memo, useState, useCallback, useMemo, type CSSProperties } from 'react';
-import { confetti } from 'react-confetti-burst';
+import { memo, useState, useCallback, useMemo, useEffect, type CSSProperties } from 'react';
+import { confetti, getPreset, getPresetNames } from 'react-confetti-burst';
+import type { PresetName } from 'react-confetti-burst';
+
+function useIsMobile(breakpoint = 768): boolean {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia(`(max-width: ${breakpoint - 1}px)`).matches;
+  });
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, [breakpoint]);
+  return isMobile;
+}
 
 // ============================================================================
 // TYPES
@@ -74,59 +89,63 @@ const CONTROLS: ControlConfig[] = [
   { key: 'colors', label: 'colors', description: 'Particle colors array', type: 'colors', defaultValue: ['#6366f1', '#8b5cf6', '#ec4899', '#f97316', '#22c55e'] },
 ];
 
-const PRESETS = [
-  { id: 'default', emoji: '✨', label: 'Default', settings: DEFAULT_SETTINGS },
-  { id: 'celebration', emoji: '🎉', label: 'Party', settings: { particleCount: 100, spread: 100, startVelocity: 45, colors: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96E6A1'], gravity: 0.8 } },
-  { id: 'snow', emoji: '❄️', label: 'Snow', settings: { particleCount: 80, spread: 180, startVelocity: 10, gravity: 0.3, drift: 2, decay: 0.99, colors: ['#ffffff', '#e0e0e0', '#c0c0c0'], ticks: 400 } },
-  { id: 'fireworks', emoji: '🎆', label: 'Fireworks', settings: { particleCount: 150, spread: 360, startVelocity: 50, decay: 0.91, gravity: 1.2, colors: ['#ff0000', '#ff7700', '#ffff00', '#00ff00', '#0000ff'] } },
-  { id: 'gentle', emoji: '🌸', label: 'Gentle', settings: { particleCount: 30, spread: 45, startVelocity: 15, gravity: 0.5, decay: 0.96, colors: ['#a78bfa', '#f0abfc', '#fda4af'] } },
-];
+const PRESET_EMOJIS: Record<string, string> = {
+  default: '✨', celebration: '🎉', firework: '🎆', snow: '❄️', rain: '🌧️',
+  sparkle: '💫', confetti: '🎊', emoji: '😀', hearts: '❤️', stars: '⭐',
+  money: '💰', pride: '🏳️‍🌈', christmas: '🎄', halloween: '🎃', newYear: '🥂', birthday: '🎂',
+};
+
+const LIBRARY_PRESETS = getPresetNames().map((name) => {
+  const preset = getPreset(name);
+  return { id: name, emoji: PRESET_EMOJIS[name] || '🎉', label: name, description: preset.description };
+});
 
 // ============================================================================
 // STYLES
 // ============================================================================
 
 const colors = {
-  bg: '#0a0a0f',
-  bgCard: '#12121a',
-  bgHover: '#1a1a24',
-  bgInput: '#1e1e28',
-  border: '#2a2a3a',
-  borderLight: '#3a3a4a',
-  text: '#ffffff',
-  textMuted: '#8888aa',
-  textDim: '#666680',
+  bg: '#09090b',
+  bgCard: '#18181b',
+  bgHover: '#27272a',
+  bgInput: '#27272a',
+  border: '#27272a',
+  borderLight: '#3f3f46',
+  text: '#fafafa',
+  textMuted: '#a1a1aa',
+  textDim: '#71717a',
   accent: '#818cf8',
   accentHover: '#a5b4fc',
-  gradient: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%)',
-  gradientSubtle: 'linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.1) 100%)',
+  gradient: 'linear-gradient(135deg, #6366f1 0%, #818cf8 100%)',
+  gradientSubtle: 'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(129,140,248,0.08) 100%)',
 };
 
 const s: Record<string, CSSProperties> = {
   // Container
   container: {
     background: colors.bgCard,
-    borderRadius: '20px',
+    borderRadius: '16px',
     border: `1px solid ${colors.border}`,
     overflow: 'hidden',
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
   },
 
   // Header
   header: {
-    background: colors.gradient,
-    padding: '32px',
+    background: colors.bgCard,
+    padding: '28px 32px',
     textAlign: 'center',
     position: 'relative',
-    overflow: 'hidden',
+    borderBottom: `1px solid ${colors.border}`,
   },
   headerGlow: {
     position: 'absolute',
-    top: '-50%',
-    left: '-50%',
-    right: '-50%',
-    bottom: '-50%',
-    background: 'radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 50%)',
+    top: '-60%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '400px',
+    height: '200px',
+    background: 'radial-gradient(ellipse at center, rgba(99,102,241,0.08) 0%, transparent 70%)',
     pointerEvents: 'none',
   },
   headerContent: {
@@ -134,35 +153,36 @@ const s: Record<string, CSSProperties> = {
     zIndex: 1,
   },
   title: {
-    fontSize: '28px',
+    fontSize: '22px',
     fontWeight: 700,
-    color: '#fff',
-    margin: '0 0 8px 0',
+    color: colors.text,
+    margin: '0 0 6px 0',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '12px',
+    gap: '10px',
+    letterSpacing: '-0.02em',
   },
   subtitle: {
-    fontSize: '14px',
-    color: 'rgba(255,255,255,0.8)',
+    fontSize: '13px',
+    color: colors.textMuted,
     margin: 0,
   },
   fireBtn: {
-    marginTop: '24px',
-    padding: '14px 32px',
-    fontSize: '16px',
+    marginTop: '20px',
+    padding: '12px 28px',
+    fontSize: '14px',
     fontWeight: 600,
-    background: '#fff',
-    color: '#6366f1',
+    background: '#6366f1',
+    color: '#fff',
     border: 'none',
-    borderRadius: '12px',
+    borderRadius: '10px',
     cursor: 'pointer',
     display: 'inline-flex',
     alignItems: 'center',
     gap: '8px',
-    boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-    transition: 'transform 0.2s, box-shadow 0.2s',
+    boxShadow: '0 0 20px rgba(129, 140, 248, 0.15)',
+    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
   },
 
   // Presets
@@ -174,6 +194,7 @@ const s: Record<string, CSSProperties> = {
     background: colors.bg,
     borderBottom: `1px solid ${colors.border}`,
     overflowX: 'auto',
+    flexWrap: 'wrap',
   },
   presetBtn: {
     padding: '8px 16px',
@@ -191,7 +212,7 @@ const s: Record<string, CSSProperties> = {
     gap: '6px',
   },
   presetBtnActive: {
-    background: 'rgba(99, 102, 241, 0.2)',
+    background: 'rgba(129, 140, 248, 0.15)',
     color: colors.accent,
     borderColor: colors.accent,
   },
@@ -282,7 +303,7 @@ const s: Record<string, CSSProperties> = {
   },
   sliderFill: {
     height: '100%',
-    background: colors.gradient,
+    background: colors.accent,
     borderRadius: '3px',
     transition: 'width 0.1s',
   },
@@ -336,7 +357,7 @@ const s: Record<string, CSSProperties> = {
     transition: 'all 0.2s',
   },
   toggleBtnActive: {
-    background: colors.gradient,
+    background: '#6366f1',
     color: '#fff',
     borderColor: 'transparent',
   },
@@ -417,16 +438,16 @@ const s: Record<string, CSSProperties> = {
     padding: '6px 14px',
     fontSize: '12px',
     fontWeight: 600,
-    background: colors.gradient,
+    background: '#6366f1',
     color: '#fff',
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    transition: 'opacity 0.2s',
+    transition: 'all 0.2s',
   },
   codeBlock: {
     padding: '20px 24px',
-    background: '#0d0d12',
+    background: '#09090b',
     margin: 0,
     overflow: 'auto',
   },
@@ -434,7 +455,7 @@ const s: Record<string, CSSProperties> = {
     fontFamily: '"SF Mono", "Fira Code", monospace',
     fontSize: '13px',
     lineHeight: 1.6,
-    color: '#e2e8f0',
+    color: '#e4e4e7',
   },
 };
 
@@ -448,12 +469,13 @@ interface SliderProps {
   max: number;
   step: number;
   unit?: string;
+  label?: string;
   onChange: (v: number) => void;
 }
 
-const Slider = memo(function Slider({ value, min, max, step, unit = '', onChange }: SliderProps) {
+const Slider = memo(function Slider({ value, min, max, step, unit = '', label, onChange }: SliderProps) {
   const percentage = ((value - min) / (max - min)) * 100;
-  
+
   return (
     <div style={s.sliderContainer}>
       <div style={s.sliderWrapper}>
@@ -468,6 +490,10 @@ const Slider = memo(function Slider({ value, min, max, step, unit = '', onChange
           max={max}
           step={step}
           value={value}
+          aria-label={label}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          aria-valuenow={value}
           onChange={(e) => onChange(Number(e.target.value))}
         />
       </div>
@@ -540,6 +566,7 @@ const ColorPicker = memo(function ColorPicker({ colors: colorList, onChange }: C
             value={color}
             onChange={(e) => updateColor(i, e.target.value)}
             style={s.colorInput}
+            aria-label={`Color ${i + 1}: ${color}`}
           />
           {colorList.length > 1 && (
             <button
@@ -573,6 +600,7 @@ function hslToHex(h: number, s: number, l: number): string {
 // ============================================================================
 
 export const ControlPanel = memo(function ControlPanel() {
+  const isMobile = useIsMobile();
   const [settings, setSettings] = useState<ConfettiSettings>(DEFAULT_SETTINGS);
   const [activePreset, setActivePreset] = useState('default');
   const [copied, setCopied] = useState(false);
@@ -601,10 +629,25 @@ export const ControlPanel = memo(function ControlPanel() {
   }, [settings]);
 
   const applyPreset = useCallback((presetId: string) => {
-    const preset = PRESETS.find(p => p.id === presetId);
-    if (preset) {
-      setSettings(prev => ({ ...prev, ...preset.settings }));
+    try {
+      const preset = getPreset(presetId as PresetName);
+      const opts = preset.options;
+      setSettings(prev => ({
+        ...prev,
+        particleCount: opts.particleCount ?? prev.particleCount,
+        spread: opts.direction?.spread ?? prev.spread,
+        gravity: opts.physics?.gravity != null ? opts.physics.gravity * 4 : prev.gravity,
+        drift: opts.drift ?? prev.drift,
+        decay: opts.physics?.friction ?? prev.decay,
+        ticks: opts.ticks ?? prev.ticks,
+        scalar: opts.scalar ?? prev.scalar,
+        colors: opts.particle?.colors ? [...opts.particle.colors] as string[] : prev.colors,
+        flat: opts.flat ?? prev.flat,
+      }));
       setActivePreset(presetId);
+    } catch {
+      setSettings(DEFAULT_SETTINGS);
+      setActivePreset('default');
     }
   }, []);
 
@@ -615,6 +658,8 @@ export const ControlPanel = memo(function ControlPanel() {
 
   const code = useMemo(() => {
     const lines = [
+      "import { confetti } from 'react-confetti-burst';",
+      '',
       'confetti({',
       `  particleCount: ${settings.particleCount},`,
       `  spread: ${settings.spread},`,
@@ -655,8 +700,8 @@ export const ControlPanel = memo(function ControlPanel() {
           <button
             style={s.fireBtn}
             onClick={fire}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.boxShadow = '0 0 30px rgba(129, 140, 248, 0.25)'; e.currentTarget.style.background = '#818cf8'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.boxShadow = '0 0 20px rgba(129, 140, 248, 0.15)'; e.currentTarget.style.background = '#6366f1'; }}
           >
             <span style={{ fontSize: '20px' }}>🎉</span>
             Fire Confetti!
@@ -666,7 +711,7 @@ export const ControlPanel = memo(function ControlPanel() {
 
       {/* Presets */}
       <div style={s.presetsBar}>
-        {PRESETS.map(preset => (
+        {LIBRARY_PRESETS.map(preset => (
           <button
             key={preset.id}
             style={{
@@ -674,6 +719,7 @@ export const ControlPanel = memo(function ControlPanel() {
               ...(activePreset === preset.id ? s.presetBtnActive : {}),
             }}
             onClick={() => applyPreset(preset.id)}
+            title={preset.description}
           >
             <span>{preset.emoji}</span>
             {preset.label}
@@ -689,6 +735,7 @@ export const ControlPanel = memo(function ControlPanel() {
             key={config.key}
             style={{
               ...s.controlRow,
+              ...(isMobile ? { gridTemplateColumns: '1fr', gap: '8px', padding: '12px 16px' } : {}),
               ...(index % 2 === 1 ? s.controlRowAlt : {}),
               ...(hoveredRow === config.key ? { background: colors.bgHover } : {}),
             }}
@@ -696,18 +743,20 @@ export const ControlPanel = memo(function ControlPanel() {
             onMouseLeave={() => setHoveredRow(null)}
           >
             {/* Name */}
-            <div style={s.propCell}>
+            <div style={{ ...s.propCell, ...(isMobile ? { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' } : {}) }}>
               <span style={s.propName}>{config.label}</span>
               <span style={s.propType}>{config.type}</span>
             </div>
 
-            {/* Description */}
-            <div style={s.description}>{config.description}</div>
+            {/* Description - hidden on mobile */}
+            {!isMobile && <div style={s.description}>{config.description}</div>}
 
-            {/* Default */}
-            <div style={s.defaultVal}>
-              {config.type === 'colors' ? '—' : String(config.defaultValue)}
-            </div>
+            {/* Default - hidden on mobile */}
+            {!isMobile && (
+              <div style={s.defaultVal}>
+                {config.type === 'colors' ? '—' : String(config.defaultValue)}
+              </div>
+            )}
 
             {/* Control */}
             <div>
@@ -718,6 +767,7 @@ export const ControlPanel = memo(function ControlPanel() {
                   max={config.max!}
                   step={config.step!}
                   unit={config.unit}
+                  label={config.label}
                   onChange={(v) => update(config.key, v as never)}
                 />
               )}

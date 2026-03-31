@@ -12,6 +12,7 @@ import {
   confetti,
 } from 'react-confetti-burst';
 import { Section, DemoCard, Button, CodeBlock, ControlPanel } from '../ui';
+import { Sparkles } from 'lucide-react';
 
 const BASIC_BUTTON_CODE = `import { ConfettiButton } from 'react-confetti-burst';
 
@@ -103,7 +104,7 @@ export const BasicDemo = memo(function BasicDemo() {
       id="basic"
       title="Basic Usage"
       description="Simple confetti bursts with components and hooks"
-      icon="🎉"
+      icon={<Sparkles size={20} />}
     >
       <ControlPanel />
       <DemoCard
@@ -115,7 +116,7 @@ export const BasicDemo = memo(function BasicDemo() {
             padding: '0.75rem 1.5rem',
             fontSize: '1rem',
             fontWeight: 600,
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+            background: '#6366f1',
             color: 'white',
             border: 'none',
             borderRadius: '0.5rem',
@@ -157,7 +158,7 @@ export const BasicDemo = memo(function BasicDemo() {
             padding: '0.75rem 1.5rem',
             fontSize: '1rem',
             fontWeight: 600,
-            background: 'linear-gradient(135deg, #ec4899 0%, #f97316 100%)',
+            background: '#ec4899',
             color: 'white',
             border: 'none',
             borderRadius: '0.5rem',

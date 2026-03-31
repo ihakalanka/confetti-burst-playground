@@ -9,7 +9,7 @@ interface SectionProps {
   readonly id: string;
   readonly title: string;
   readonly description: string;
-  readonly icon: string;
+  readonly icon: ReactNode;
   readonly children: ReactNode;
 }
 
@@ -23,7 +23,7 @@ export const Section = memo(function Section({
   return (
     <section id={id} className={styles.section}>
       <header className={styles.header}>
-        <span className={styles.icon} role="img" aria-hidden="true">
+        <span className={styles.icon} aria-hidden="true">
           {icon}
         </span>
         <div>

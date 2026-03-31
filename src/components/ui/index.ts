@@ -7,3 +7,4 @@ export { CodeBlock } from './CodeBlock';
 export { Section } from './Section';
 export { DemoCard } from './DemoCard';
 export { ControlPanel } from './ControlPanel';
+export { ErrorBoundary } from './ErrorBoundary';

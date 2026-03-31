@@ -1,8 +1,9 @@
 /**
- * Code display component with syntax highlighting placeholder
+ * Code display component with copy-to-clipboard
  */
 
 import { memo } from 'react';
+import { Copy, Check } from 'lucide-react';
 import { useClipboard } from '../../hooks';
 import styles from './CodeBlock.module.css';
 
@@ -36,7 +37,7 @@ export const CodeBlock = memo(function CodeBlock({
           onClick={() => copy(code)}
           aria-label="Copy code to clipboard"
         >
-          {copied ? '✓ Copied!' : '📋 Copy'}
+          {copied ? <><Check size={12} /> Copied</> : <><Copy size={12} /> Copy</>}
         </button>
       </div>
     </div>
