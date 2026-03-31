@@ -20,10 +20,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     
     <title>react-confetti-burst Playground</title>
-    <script type="module" crossorigin src="/confetti-burst-playground/assets/index-BOiUIZsZ.js"></script>
-    <link rel="stylesheet" crossorigin href="/confetti-burst-playground/assets/index-JyZ-WbJX.css">
+    <script type="module" crossorigin src="/confetti-burst-playground/assets/index-BbU41bLW.js"></script>
+    <link rel="stylesheet" crossorigin href="/confetti-burst-playground/assets/index-DDX6S2A-.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="loading-spinner" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0f172a">
+        <div style="text-align:center">
+          <div style="width:40px;height:40px;margin:0 auto 16px;border:3px solid #334155;border-top-color:#6366f1;border-radius:50%;animation:spin 0.8s linear infinite"></div>
+          <div style="color:#94a3b8;font-family:system-ui,sans-serif;font-size:14px">Loading playground...</div>
+        </div>
+      </div>
+      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+    </div>
   </body>
 </html>
